@@ -1,0 +1,203 @@
+---
+title:
+author:
+date:
+output: pdf_document
+html_document: default
+
+header-includes:
+   - \usepackage{caption, graphicx, subfig, epstopdf, enumitem}
+---
+
+# Introdução
+
+$\hspace*{2em}$O seguinte relatório tem como objetivo analisar as características dos meteoritos documentados em relação a diversas variáveis, a fim de identificar possíveis associações entre elas.
+
+$\hspace*{2em}$Para isso, serão realizadas análises descritivas das variáveis. O banco de dados utilizado, chamado "Meteorite Landings", foi obtido na plataforma "Kaggle" e contém 45.716 observações e 10 colunas, com informações como ano e local de queda, tipo de meteorito, nome, peso, entre outras.
+
+$\hspace*{2em}$O software utilizado para as análises foi o R versão 4.3.1.
+
+\newpage
+
+# Metodologia
+
+$\hspace*{2em}$Este relatório é composto por técnicas estatísticas que serão descritas a seguir de acordo com o que foi utilizado para a realização das análises.
+
+
+```{r, include = FALSE}
+#instalando pacotes
+
+if(!require("leaflet")) install.packages("leaflet")
+
+if(!require("tidyverse")) install.packages("tidyverse")
+
+if(!require("devtools")) install.packages("devtools")
+
+if(!require("kableExtra")) install.packages("kableExtra")
+
+if(!require("scales")) install.packages("scales")
+```
+(coisas)
+
+$\hspace*{2em}$Ademais, vale ressaltar a necessidade de correção de valores no banco de dados. O meteorito "Northwest Africa 7701", observação 30.683 do banco de dados, apresentava o ano em que foi encontrado com o valor 2101. Fazendo uma breve pesquisa, foi possível verificar que o meteorito foi encontrado em 2010. Supondo-se que houve um erro na digitação desse valor no banco, o valor foi devidamente corrigido.
+
+\newpage
+
+# Análises
+
+```{r, include = FALSE, warning=FALSE}
+#baixindo e limpando o banco de dados
+
+banco <- read.csv("Meteorite_Landings.csv", na.strings = "")
+
+banco$year <- replace(banco$year, banco$year == 2101, 2010)
+```
+
+## Número de meteoritos achados ou observados por ano
+
+$\hspace*{2em}$Esta seção tem como objetivo analisar a quantidade de meteoritos documentados a cada ano. Os meteoritos estão classificados como "observado", caso tenha sido vistos durante a queda, ou "achado", caso tenham sido encontrados já na superfície terrestre.
+
+$\hspace*{2em}$O registro mais antigo de um meteorito observado é do ano de 860, enquanto os meteoritos mais recentes documentados no banco de dados são do ano de 2013.
+
+$\hspace*{2em}$Ademais, vale salientar que, antes de ano de 1972, o ano com mais meteoritos documentados foi 1969, com 70 observações. No entanto, após 1971, o número de meteoritos achados por ano aumentou significativamente, de modo que, para melhor visualização dos dados, foi realizado um gráfido de linhas do número de meteoritos por ano a partir de 1972.
+
+```{r fig-sub, echo=FALSE, error=FALSE, message=FALSE, warning= FALSE, fig.cap='Gráfico de linhas do número de meteoritos registrados por ano',out.width='.99\\linewidth',fig.height=4, fig.asp=NA, fig.ncol=1, fig.nrow=2}
+library(tidyverse)
+
+banco$fall <- as.factor(banco$fall)
+
+banco_linhas1 <- banco %>% filter(year != "NA") %>%
+  filter(fall != "NA") %>%
+  filter(year > 1971) %>%
+  group_by(year, fall) %>%
+  summarise(total =  n())
+
+ggplot(banco_linhas1) +
+  aes(x = year, y = total, group = fall, colour = fall) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_colour_manual(name = "Legenda", labels = c("Observado", "Achado"), values = c("#fde725", "#440154")) +
+  labs(x = "Ano", y = "Número de meteoritos") +
+  theme_minimal()
+
+library(kableExtra)
+library(devtools)
+
+tabela_anos <- banco %>% filter(year != "NA") %>%
+  filter(fall != "NA") %>%
+  group_by(year) %>%
+  summarise(total =  n())
+
+tabela_anos <- tabela_anos %>% 
+  arrange(desc(total)) %>% 
+  {.[0:5,]} %>%
+  rename(c(Ano = year, `Nº de meteoritos` = total))
+
+
+kable(head(tabela_anos), caption = "Cinco anos com maior registro de meteoritos") %>%
+  kable_styling(full_width = F, bootstrap_options = c("striped", "hoover", "responsive", "bordered", "hold_position"), position = "center")
+
+```
+
+
+$\hspace*{2em}$Com base no gráfico, observa-se que a quantidade de meteoritos achados foi muito maior do que o número de meteoritos observados. Durante o período registrado, a maior quantidade de meteoritos observados em um ano foi de 10, fazendo com que os valores de meteoritos observados se aproximem muito de 0 no gráfico em função da escala.
+
+$\hspace*{2em}$Além disso, o gráfico apresenta alguns picos evidentes, que foram representados na tabela acima. Esses picos indicam os cinco anos com mais documentação de meteoritos, sendo o maior deles no ano de 2003.
+
+\newpage
+
+## Classificação dos meteoritos
+
+$\hspace*{2em}$Nesta seção, serão identificadas as principais clçassificações dos meteoritos presentes no banco de dados. Os meteoritos são classificados de acordo com sua composição e estrutura. Dentre os dados analisados, existem 466 tipos de meteoritos diferentes. Dessa forma, serão analisados somente os dez tipos mais frequentes. 
+
+```{r fig-sub-2, echo=FALSE, error=FALSE, message=FALSE, warning= FALSE, fig.cap='Gráfico de barras das 10 principais classificações de meteorito',out.width='.99\\linewidth',fig.height=4, fig.asp=NA, fig.ncol=1, fig.nrow=2}
+library(tidyverse)
+library(scales)
+
+banco2 <- banco
+banco2$recclass <- as.factor(banco2$recclass)
+
+tabela_class <- banco2 %>% filter(recclass != "NA") %>%
+  group_by(recclass) %>%
+  summarise(total =  n())
+
+tabela_class <- tabela_class %>% 
+  arrange(desc(total)) %>% 
+  {.[0:10,]}
+
+classes <- tabela_class %>%
+  mutate(
+    freq = total %>% percent(),
+  ) %>%
+  mutate(
+    freq = paste0(round(100*total/45716, digits = 2),'%'),
+    label = str_c(total, " (", gsub("\\.", ",", freq), ")") %>% str_squish()
+  )
+
+ggplot(classes) +
+  aes(x = fct_reorder(recclass, total, .desc=T), y = total, label = label) +
+  geom_bar(stat = "identity", fill = "#440154", width = 0.7) +
+  geom_text(
+    position = position_dodge(width = .9),
+    vjust = 0.35, hjust = -0.1,
+    size = 3
+  ) + 
+  labs(x = "Classficação", y = "Frequência") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0,10000)) +
+  theme_minimal()
+```
+$\hspace*{2em}$Pelo gráfico acima, é possível perceber que os dez meteoritos mais frequentes representam 78,45% do total de observações. Além disso, nota-se que o tipo de meteorito com maior ocorrência é o L6, compondo 18,12% dos dados. 
+
+$\hspace*{2em}$O menor valor apresentado no gráfico foi 0,91%, que representa a porcentagem de meteoritos do tipo CM2. Com isso, pode-se inferir que a porcentagem de todos os demais tipos de meteoritos não mostrados na figura é menor que 1%.
+
+\newpage
+
+## Localização da queda dos meteoritos
+
+$\hspace*{2em}$O mapa a seguir pode ser utilizado para melhor compreender a distribuição dos locais onde meteoritos foram encontrados ao redor do mundo.
+
+```{r, echo=FALSE, error=FALSE, message=FALSE, warning= FALSE, eval = FALSE}
+#o gráfico mostrado do relátorio é uma imagem do gráfico obtido a partir do código a seguir:
+
+library(leaflet)
+library(tidyverse)
+
+banco_mapa <- banco %>% rename(peso = mass..g.) %>%
+  filter(reclat != "NA") %>%
+  filter(reclong != "NA") %>%
+  mutate(fall = case_when(
+    fall %>% str_detect("Fell") ~ "Observado",
+    fall %>% str_detect("Found") ~ "Achado"
+  ))
+
+banco_mapa$peso <- str_c(banco_mapa$peso) %>% str_replace("\\.", ",")
+banco_mapa$fall <- as.factor(banco_mapa$fall)
+
+pal <- colorFactor("viridis", levels = levels(banco_mapa$fall))
+
+mytext <- paste(
+  "Nome: ", banco$name, "<br/>", 
+  "Tipo: ", banco$recclass, "<br/>", 
+  "Peso em gramas: ", banco_mapa$peso, sep="") %>%
+  lapply(htmltools::HTML)
+
+m <- leaflet(banco_mapa) %>% 
+  addTiles()  %>% 
+  setView(lat=0, lng=0, zoom=2) %>%
+  addProviderTiles("Esri.WorldImagery") %>%
+  addCircleMarkers(~reclong, ~reclat, 
+                   fillColor = ~pal(banco_mapa$fall), fillOpacity = 0.7, color="white", radius=4, stroke=FALSE,
+                   label = mytext,
+                   labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "13px", direction = "auto")
+  ) %>% addLegend(pal = pal, values = banco_mapa$fall, opacity=0.9, title = "Legenda", position = "bottomright")
+
+```
+
+(mapa aqui)
+
+$\hspace*{2em}$Com base no mapa acima, é possível perceber um comportamento interessante na distribuição dos locais de queda dos meteoritos documentados. Primeiramente, observa-se que há uma concentração de meteoritos achados na América do Norte, na Oceania, no norte da África e na península arábica, na região onde fica o Omã. Já os meteoritos que foram observados em queda se encontram, sobretudo, na Europa, na África Subsaariana, na região onde se encontra Índia, leste da China, Japão e países do sudeste asiático.
+
+$\hspace*{2em}$Ademais, também pode-se notar que existem regiões onde poucos ou nenhum meteorito foi encontrado. A partir disso, é possível levantar algumas hipóteses sobre esse fenômeno. As regiões norte do Canadá e da Rússia e a Groenlândia, por exemplo, apresentam climas frios extremos e são, portanto, pouco habitadas, de modo que, mesmo que meteoritos tenham caído nessas áreas, não foram registrados.
+
+$\hspace*{2em}$Outras regiões em que se observa uma ausência do registro de meteoritos são o centro da América do Sul e da África. Uma das similiradades entre as duas regiões é que ambas apresentam florestas tropicais densas, a Floresta Amazônica e Floresta do Congo. Assim, as características da vegetação, clima e relevo dessas regiões poderia explicar a dificuldade em descobrir meteoritos caídos nesses locais.
