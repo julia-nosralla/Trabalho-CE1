@@ -4,6 +4,8 @@ banco <- read.csv("Meteorite_Landings.csv", na.strings = "")
 
 banco$year <- replace(banco$year, banco$year == 2101, 2010)
 
+banco$fall <- as.factor(banco$fall)
+
 banco_linhas1 <- banco %>% filter(year != "NA") %>%
   filter(fall != "NA") %>%
   filter(year > 1971) %>%
