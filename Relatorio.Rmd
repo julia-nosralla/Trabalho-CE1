@@ -6,6 +6,19 @@ header-includes:
    - \usepackage{pdfpages, caption, graphicx, subfig, epstopdf, enumitem}
 ---
 
+\pagenumbering{gobble}
+
+\begin{titlepage}
+  \centering
+  \includepdf{capa.pdf}
+\end{titlepage}
+
+\newpage
+
+\pagenumbering{arabic}
+
+\newpage
+
 # Introdução
 
 $\hspace*{2em}$O seguinte relatório tem como objetivo analisar as características dos meteoritos documentados em relação a diversas variáveis, a fim de identificar possíveis associações entre elas.
