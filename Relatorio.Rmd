@@ -360,7 +360,11 @@ $\hspace*{2em}$Ademais, também pode-se notar que existem regiões onde poucos o
 
 $\hspace*{2em}$Outras regiões em que se observa uma ausência do registro de meteoritos são o centro da América do Sul e da África. Uma das similiradades entre as duas regiões é que ambas apresentam florestas tropicais densas, a Floresta Amazônica e a Floresta do Congo. Assim, as características da vegetação, do clima e do relevo dessas regiões poderia explicar a dificuldade em descobrir meteoritos caídos nesses locais.
 
+ \newpage
+ 
 # Conclusão
+
+\newpage
 
 # Participações
 Júlia Lima Nosralla (232014825)
