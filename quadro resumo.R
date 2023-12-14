@@ -6,8 +6,8 @@ quadro_resumo <- banco3 %>%
   summarize(Média = round(mean(mass..g.),2),
             `Desvio Padrão` = round(sd(mass..g.),2),
             `Variância` = round(var(mass..g.),2),
-            `Mínimo` = round(min(mass..g.),2),
-            `1º Quartil` = round(quantile(mass..g., probs = .25),2),
+            `Mínimo` = min(mass..g.),
+            `1º Quartil` = round(quantile(mass..g., probs = .25),4),
             Mediana = round(quantile(mass..g., probs = .5),2),
             `3º Quartil` = round(quantile(mass..g., probs = .75),2),
             `Máximo` = round(max(mass..g.),2)) %>% t() %>% as.data.frame() %>% 

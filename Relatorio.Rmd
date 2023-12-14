@@ -6,19 +6,6 @@ header-includes:
    - \usepackage{pdfpages, caption, graphicx, subfig, epstopdf, enumitem}
 ---
 
-\pagenumbering{gobble}
-
-\begin{titlepage}
-    \centering
-    \input{capa.tex}
-\end{titlepage}
-
-\newpage
-
-\pagenumbering{arabic}
-
-\newpage
-
 # Introdução
 
 $\hspace*{2em}$O seguinte relatório tem como objetivo analisar as características dos meteoritos documentados em relação a diversas variáveis, a fim de identificar possíveis associações entre elas.
@@ -47,9 +34,86 @@ if(!require("kableExtra")) install.packages("kableExtra")
 
 if(!require("scales")) install.packages("scales")
 ```
-(coisas)
+
+### Média
+
+$\hspace*{2em}$A média é a soma das observações dividida pelo número total delas, dada pela fórmula:
+$$\bar{X}=\frac{\sum\limits_{i=1}^{n}X_i}{n}$$
+
+Com:
+\begin{itemize}
+\item $i = 1, \, 2, \, ..., \, n$
+\item $n = $ número total de observações
+\end{itemize}
+
+### Mediana
+
+$\hspace*{2em}$Sejam as $n$ observações de um conjunto de dados $X=X_{(1)},X_{(2)},\ldots, X_{(n)}$ de determinada variável ordenadas de forma crescente. A mediana do conjunto de dados X é o valor que deixa metade das observações abaixo dela e metade dos dados acima.
+
+$\hspace*{2em}$Com isso, pode-se calcular a mediana da seguinte forma:
+
+\[ med(X)=
+\Bigg \{
+\begin{array}{ll}
+X_{\frac{n+1}{2}}, \textrm{ para n ímpar};\\
+\frac{X_{\frac{n}{2}}+X_{\frac{n}{2}}+1}{2},\textrm{para n par.}
+\end{array}
+\]
+
+
+### Quartis
+
+$\hspace*{2em}$Os quartis são separatrizes que dividem o conjunto de dados em quatro partes iguais. O primeiro quartil (ou inferior) é o conjunto que delimita os 25\% menores valores, o segundo representa a mediana e é o valor que ocupa a posição central (ou seja, metade dos dados estão abaixo dela e a outra metade está acima) e o terceiro delimita os 75\% maiores valores. Inicialmente deve-se calcular a posição do quartil:
+
+\begin{itemize}
+\item Posição do primeiro quartil $P_1$:
+$$P_1=\frac{n+1}{4}$$
+
+\item Posição da mediana (segundo quartil) $P_2$:
+$$P_2 = \frac{n+1}{2}$$
+
+\item Posição do terceiro quartil $P_3$:
+$$P_3=\frac{3 \times (n+1)}{4}$$
+
+\end{itemize} 
+
+$\hspace*{2em}$Com $n$ sendo o tamanho da amostra. Dessa forma, $X_{\left( P_i \right)}$ é a o valor do $i$-ésimo quartil, onde $X_{\left( j \right)}$ representa a $j$-ésima observação dos dados ordenados.
+
+### Variância
+
+$\hspace*{2em}$A variância é uma medida que avalia o quanto que os dados estão dispersos em relação à média, em uma escala ao quadrado da escala dos dados. 
+
+$\hspace*{2em}$Para uma população, a variância é dada por:
+$$\sigma^2=\frac{\sum\limits_{i=1}^{N}\left(X_i - \mu\right)^2}{N}$$
+
+Com:
+\begin{itemize}
+\item $X_i =$ $i$-ésima observação da população
+\item $\mu =$ média populacional
+\item $N =$ tamanho da população
+\end{itemize}
+
+### Desvio padrão
+
+$\hspace*{2em}$O desvio padrão é a raiz quadrada da variância. Avalia o quanto os dados estão dispersos em relação à média.
+
+$\hspace*{2em}$Para uma população, o desvio padrão é dado por:
+$$\sigma=\sqrt{\frac{\sum\limits_{i=1}^{N}\left(X_i - \mu\right)^2}{N}}$$
+
+Com:
+\begin{itemize}
+\item $X_i =$ i-ésima observação da população
+\item $\mu =$ média populacional
+\item $N =$ tamanho da população
+\end{itemize}
+
+### Alterações no banco
 
 $\hspace*{2em}$Ademais, vale ressaltar a necessidade de correção de valores no banco de dados. O meteorito "Northwest Africa 7701", observação 30.683 do banco de dados, apresentava o ano em que foi encontrado com o valor 2101. Fazendo uma breve pesquisa, foi possível verificar que o meteorito foi encontrado em 2010. Supondo-se que houve um erro na digitação desse valor no banco, o valor foi devidamente corrigido.
+
+### Visualização dos resultados
+
+$\hspace*{2em}$Com base nos dados contidos no banco, foram construídos gráficos, tabelas e mapas a fim de facilitar a visualização dos resultados obtidos. Assim, será possível intepretar as características das observações de forma mais clara.
 
 \newpage
 
@@ -62,6 +126,7 @@ banco <- read.csv("Meteorite_Landings.csv", na.strings = "")
 
 banco$year <- replace(banco$year, banco$year == 2101, 2010)
 ```
+
 
 ## Número de meteoritos achados ou observados por ano
 
@@ -90,6 +155,9 @@ ggplot(banco_linhas1) +
   labs(x = "Ano", y = "Número de meteoritos") +
   theme_minimal()
 
+```
+
+```{r, echo=FALSE, error=FALSE, message=FALSE, fig.align='center', fig.pos='H'}
 library(kableExtra)
 library(devtools)
 
@@ -104,11 +172,10 @@ tabela_anos <- tabela_anos %>%
   rename(c(Ano = year, `Nº de meteoritos` = total))
 
 
-kable(head(tabela_anos), caption = "Cinco anos com maior registro de meteoritos") %>%
-  kable_styling(full_width = F, bootstrap_options = c("striped", "hoover", "responsive", "bordered", "hold_position"), position = "center")
+kable(tabela_anos, format = "latex", caption = "Cinco anos com maior registro de meteoritos") %>%
+  kable_styling(full_width = F, latex_options = c("striped", "hoover", "responsive", "bordered", "hold_position"), position = "center")
 
 ```
-
 
 $\hspace*{2em}$Com base no gráfico, observa-se que a quantidade de meteoritos achados foi muito maior do que o número de meteoritos observados. Durante o período registrado, a maior quantidade de meteoritos observados em um ano foi de 10, fazendo com que os valores de meteoritos observados se aproximem muito de 0 no gráfico em função da escala.
 
@@ -157,9 +224,86 @@ ggplot(classes) +
   scale_y_continuous(limits = c(0,10000)) +
   theme_minimal()
 ```
+
 $\hspace*{2em}$Pelo gráfico acima, é possível perceber que os dez meteoritos mais frequentes representam 78,45% do total de observações. Além disso, nota-se que o tipo de meteorito com maior ocorrência é o L6, compondo 18,12% dos dados. 
 
 $\hspace*{2em}$O menor valor apresentado no gráfico foi 0,91%, que representa a porcentagem de meteoritos do tipo CM2. Com isso, pode-se inferir que a porcentagem de todos os demais tipos de meteoritos não mostrados na figura é menor que 1%.
+
+\newpage
+
+## Peso dos meteoritos separado pela classificação
+
+$\hspace*{2em}$Esta seção tem como objetivo analisar o peso dos meteoritos de acordo com suas dez classificações principais. O peso é uma variável quantitativa contínua que varia de 0,00001 a 4000 gramas.
+
+$\hspace*{2em}$A seguir, observamos o gráfico  e a tabela com a distribuição das variáveis:
+
+
+```{r fig-sub-3, echo=FALSE, error=FALSE, message=FALSE, warning= FALSE, fig.cap='Boxplot do peso dos meteoritos nas 10 principais classificações',out.width='.99\\linewidth',fig.height=4, fig.asp=NA, fig.ncol=1, fig.nrow=2}
+library(tidyverse)
+library(scales)
+
+banco3 <- banco %>% 
+  filter(recclass != "NA") %>%
+  filter(mass..g. != "NA") %>%
+  filter_all(any_vars(. %in% c("L6", "H5", "L5", "H6", "H4", "LL6", "LL5", "L4", "H4/5", "CM2"))) %>%
+  mutate(mass..g. = mass..g./ 1000)
+
+
+ggplot(banco3) +
+  aes(x = reorder(recclass, mass..g., median), y = mass..g.) +
+  geom_boxplot(fill = c("#fde725"), width = 0.5) +
+  stat_summary(
+    fun = "mean", geom = "point", shape = 23, size = 3, fill = "white"
+  ) +
+  labs(x = "Classificação", y = "Peso") +
+  scale_y_continuous(
+    trans = "log10",
+    breaks = c(1e-03, 1e+00, 1e+03),
+    labels = c(0.001, 1, 1000)
+  ) +
+  theme_minimal()
+```
+
+
+```{r, echo=FALSE, error=FALSE, message=FALSE, fig.align='center', fig.pos='H'}
+library(kableExtra)
+library(devtools)
+
+quadro_resumo <- banco3 %>% 
+  group_by(recclass) %>%
+  summarize(Média = round(mean(mass..g.),2),
+            `Desvio Padrão` = round(sd(mass..g.),2),
+            `Variância` = round(var(mass..g.),2),
+            `Mínimo` = min(mass..g.),
+            `1º Quartil` = round(quantile(mass..g., probs = .25),4),
+            Mediana = round(quantile(mass..g., probs = .5),2),
+            `3º Quartil` = round(quantile(mass..g., probs = .75),2),
+            `Máximo` = round(max(mass..g.),2)) %>% t() %>% as.data.frame() %>% 
+  mutate(V1 = str_replace(V1,"\\.",","),
+         V2 = str_replace(V2,"\\.",","),
+         V3 = str_replace(V3,"\\.",","),
+         V4 = str_replace(V4,"\\.",","),
+         V5 = str_replace(V5,"\\.",","),
+         V6 = str_replace(V6,"\\.",","),
+         V7 = str_replace(V7,"\\.",","),
+         V8 = str_replace(V8,"\\.",","),
+         V9 = str_replace(V9,"\\.",","),
+         V10 = str_replace(V10,"\\.",",")
+         ) %>%
+  rename(CM2 = V1, H4 = V2, `H4/5` = V3, H5 = V4, H6 = V5, L4 = V6, L5 = V7, L6 = V8, LL5 = V9, LL6 = V10)
+
+quadro_resumo <- quadro_resumo[-1,]
+
+kable(quadro_resumo, format = "latex", caption = "Medidas resumo") %>%
+  kable_styling(full_width = F, latex_options = c("striped", "hoover", "responsive", "bordered", "hold_position"), position = "center")
+
+```
+
+$\hspace*{2em}$A partir das informações obtidas, percebe-se que existem algumas variações nos pesos de cada categoria de meteorito. Primeiramente, é interessante destacar o comporatemento dos meteoritos tipo H5: essa categoria apresentou a maior média e o maior desvio padrão, com valores de 2,17 e 51,17, respectivamente. Além disso, essa classe possui o menor e o maior peso observados na tabela, e é também a classe com mais outliers, tanto inferiores quanto superiores.
+
+$\hspace*{2em}$Em relação aos demais grupos, vale notar que a menor média e o menor desvio padrão estão na classe CM2, com valores de 0,37 e 4,98, respectivamente. Pelo gráfico, é evidente que a categoria CM2 apresenta a menor caixa do boxplot. A maior mediana é de 0,07, na categoria L4, enquanto o menor valor de mediana é de 0,1, para os meteoritos H4/5.
+
+$\hspace*{2em}$Além disso, oserva-se uma grande quantidade de outliers acima do limite superior em todos os grupos, enquanto os outliers inferiores aparecem apenas em CM2, H6, H5, LL6 e L6.
 
 \newpage
 
@@ -204,10 +348,21 @@ m <- leaflet(banco_mapa) %>%
 
 ```
 
-(mapa aqui)
+![Mapa dos locais de queda de meteoritos](FotoMapa.jpeg)
 
-$\hspace*{2em}$Com base no mapa acima, é possível perceber um comportamento interessante na distribuição dos locais de queda dos meteoritos documentados. Primeiramente, observa-se que há uma concentração de meteoritos achados na América do Norte, na Oceania, no norte da África e na península arábica, na região onde fica o Omã. Já os meteoritos que foram observados em queda se encontram, sobretudo, na Europa, na África Subsaariana, na região onde se encontra Índia, leste da China, Japão e países do sudeste asiático.
+\begin{center}
+    \href{https://julia-nosralla.github.io/mapa/}{Link de uma versão interativa}
+\end{center}
 
-$\hspace*{2em}$Ademais, também pode-se notar que existem regiões onde poucos ou nenhum meteorito foi encontrado. A partir disso, é possível levantar algumas hipóteses sobre esse fenômeno. As regiões norte do Canadá e da Rússia e a Groenlândia, por exemplo, apresentam climas frios extremos e são, portanto, pouco habitadas, de modo que, mesmo que meteoritos tenham caído nessas áreas, não foram registrados.
+$\hspace*{2em}$Com base no mapa acima, é possível visualizar um comportamento interessante na distribuição dos locais de queda dos meteoritos documentados. Primeiramente, observa-se que há uma concentração de meteoritos achados na América do Norte, na Oceania, no norte da África e na península arábica, sobretudo na região onde fica o Omã. Já os meteoritos que foram observados em queda se encontram concentrados na Europa, na África Subsaariana e na região onde se encontra Índia, leste da China, Japão e países do sudeste asiático.
 
-$\hspace*{2em}$Outras regiões em que se observa uma ausência do registro de meteoritos são o centro da América do Sul e da África. Uma das similiradades entre as duas regiões é que ambas apresentam florestas tropicais densas, a Floresta Amazônica e Floresta do Congo. Assim, as características da vegetação, clima e relevo dessas regiões poderia explicar a dificuldade em descobrir meteoritos caídos nesses locais.
+$\hspace*{2em}$Ademais, também pode-se notar que existem regiões onde poucos ou nenhum meteorito foi encontrado. A partir disso, é possível levantar algumas hipóteses sobre esse fenômeno. As regiões norte do Canadá e da Rússia e a Groenlândia, por exemplo, apresentam climas frios extremos e são, portanto, pouco habitadas, de modo que meteoritos que caem nessas regiões dificilmente são encontrados.
+
+$\hspace*{2em}$Outras regiões em que se observa uma ausência do registro de meteoritos são o centro da América do Sul e da África. Uma das similiradades entre as duas regiões é que ambas apresentam florestas tropicais densas, a Floresta Amazônica e a Floresta do Congo. Assim, as características da vegetação, do clima e do relevo dessas regiões poderia explicar a dificuldade em descobrir meteoritos caídos nesses locais.
+
+# Conclusão
+
+# Participações
+Júlia Lima Nosralla (232014825)
+
+Leonardo Farias Saraiva (232014834)
