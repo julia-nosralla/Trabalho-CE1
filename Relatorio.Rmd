@@ -1,13 +1,23 @@
 ---
-title:
-author:
-date:
 output: pdf_document
 html_document: default
-
+latex-engine: pdflatex
 header-includes:
-   - \usepackage{caption, graphicx, subfig, epstopdf, enumitem}
+   - \usepackage{pdfpages, caption, graphicx, subfig, epstopdf, enumitem}
 ---
+
+\pagenumbering{gobble}
+
+\begin{titlepage}
+    \centering
+    \input{capa.tex}
+\end{titlepage}
+
+\newpage
+
+\pagenumbering{arabic}
+
+\newpage
 
 # Introdução
 

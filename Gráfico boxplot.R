@@ -15,5 +15,9 @@ ggplot(banco3) +
     fun = "mean", geom = "point", shape = 23, size = 3, fill = "white"
   ) +
   labs(x = "Classificação", y = "Peso") +
-  scale_y_continuous(trans = "log10") +
+  scale_y_continuous(
+    trans = "log10",
+    breaks = c(1e-03, 1e+00, 1e+03),
+    labels = c(0.001, 1, 1000)
+  ) +
   theme_minimal()
