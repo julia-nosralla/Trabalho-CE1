@@ -122,7 +122,7 @@ Com:
 
 ## Limpeza dos dados
 
-$\hspace*{2em}$Como é de praxe, é importante ressaltar a necessidade de limpeza e correção de valores no banco de dados. Em particular, merece destaque o caso do meteorito "Northwest Africa 7701", observação 30.683 do banco de dados, para o qual verificou-se após uma exploração inicial da base de dados que apresentava o valor 2101 referente ao ano em que foi encontrado. Evidentemente isso configura um erro, o qual provavelmente se deu quando da tabulação dos dados. Fazendo uma breve pesquisa, foi possível verificar que o meteorito na verdade foi encontrado no ano de 2010. Após esta constatação, pôde-se tomar por certa a suposição inicial de que houve um erro de digitação no referido valor, de modo que optou-se por corrigi-lo para o seu valor devido, ao invés de descartá-lo, como é o procedimento padrão para dados inconsistentes.
+$\hspace*{2em}$Como é de praxe, é importante ressaltar a necessidade de limpeza e correção de valores no banco de dados. Em particular, merece destaque o caso do meteorito "Northwest Africa 7701", observação 30.683 do banco de dados, para o qual verificou-se após uma exploração inicial da base de dados que apresentava o valor 2101 referente ao ano em que foi encontrado. Evidentemente isso configura um erro, o qual provavelmente se deu no momento da tabulação dos dados. Fazendo uma breve pesquisa, foi possível verificar que o meteorito na verdade foi encontrado no ano de 2010. Após essa constatação, pôde-se tomar por certa a suposição inicial de que houve um erro de digitação no referido valor, de modo que optou-se por corrigí-lo para o seu valor devido ao invés de descartá-lo, como é o procedimento padrão para dados inconsistentes.
 
 ```{r, include = FALSE, warning=FALSE}
 #leitura e limpeza do banco de dados
@@ -140,13 +140,13 @@ $\hspace*{2em}$Após uma primeira exploração, a devida limpeza e correção do
 
 # Análises
 
-## Número de meteoritos encontrados ou observados por ano
+## Número de meteoritos achados ou observados por ano
 
-$\hspace*{2em}$Esta seção tem como objetivo comparar a quantidade de meteoritos documentados a cada ano. Cada meteorito é classificado como "observado", caso tenha sido visto no momento da queda, ou "encontrado", caso tenha sido visto posteriormente, já na superfície terrestre.
+$\hspace*{2em}$Esta seção tem como objetivo comparar a quantidade de meteoritos documentados a cada ano. Cada meteorito é classificado como "observado", caso tenha sido visto no momento da queda, ou "achado", caso tenha sido encontrado posteriormente, já na superfície terrestre.
 
 $\hspace*{2em}$O registro mais antigo de um meteorito observado é do ano de 860, enquanto os meteoritos mais recentes documentados no banco de dados são do ano de 2013.
 
-$\hspace*{2em}$Ademais, vale salientar que, antes de ano de 1972, o ano com mais meteoritos documentados foi 1969, com 70 observações. No entanto, após 1971, o número de meteoritos encontrados por ano aumentou significativamente, de modo que optou-se por representar em um gráfico de linhas o número de meteoritos registrados por ano em uma série a partir de 1972. Dessa forma, ao restringirmos a representação gráfica aos dados de anos mais recentes, otimizamos a visualização desses dados.
+$\hspace*{2em}$Ademais, vale salientar que, antes de ano de 1972, o ano com mais meteoritos documentados foi 1969, com 70 observações. No entanto, após 1971, o número de meteoritos achados por ano aumentou significativamente, de modo que optou-se por representar em um gráfico de linhas o número de meteoritos registrados por ano em uma série a partir de 1972. Dessa forma, ao restringir a representação gráfica aos dados de anos mais recentes, será otimizada a visualização desses dados.
 
 ```{r fig-sub, echo=FALSE, error=FALSE, message=FALSE, warning= FALSE, fig.cap='Gráfico de linhas do número de meteoritos registrados por ano',out.width='.99\\linewidth',fig.height=4, fig.asp=NA, fig.ncol=1, fig.nrow=2}
 library(tidyverse)
@@ -169,19 +169,19 @@ ggplot() +
   geom_point(data = banco_encontrados, aes(x = year, y = total, color = "encontrados"), size = 2) +
   geom_line(data = banco_observados, aes(x = year, y = total * 100, color = "observados"), linewidth = 1) +
   geom_point(data = banco_observados, aes(x = year, y = total * 100, color = "observados"), size = 2) +
-  scale_color_manual(name = "Legenda", labels = c("encontrados", "observados"), values = c("encontrados" = "#440154", "observados" = "#fde725")) +
-  labs(x = "Ano", y = "Número de meteoritos encontrados") +
+  scale_color_manual(name = "Legenda", labels = c("Achados", "Observados"), values = c("encontrados" = "#440154", "observados" = "#fde725")) +
+  labs(x = "Ano", y = "Número de meteoritos achados") +
   theme_minimal() +
   scale_y_continuous(
     sec.axis = sec_axis(~./100, name = "Número de meteoritos observados", breaks = seq(0, 30, by = 5))
   )
 ```
 
-$\hspace*{2em}$Com base no gráfico, observa-se que a quantidade de meteoritos encontrados foi de uma ordem significativamente maior do que o número de meteoritos observados. Ainda no intuito de otimizar a visualização, optou-se por representar graficamente esses valores em escalas distintas.
+$\hspace*{2em}$Com base no gráfico, observa-se que a quantidade de meteoritos achados foi de uma ordem significativamente maior do que o número de meteoritos observados. Ainda no intuito de melhorar a visualização, optou-se por representar graficamente esses valores em escalas distintas.
 
-$\hspace*{2em}$Durante o período analisado, a maior quantidade de meteoritos observados em um ano foi de 12 em 1976, enquanto a quantidade de meteoritos encontrados chegou a 3314 em 2003.
+$\hspace*{2em}$Durante o período analisado, a maior quantidade de meteoritos observados em um ano foi de 12 em 1976, enquanto a quantidade de meteoritos achados chegou a 3314 em 2003.
 
-$\hspace*{2em}$Por fim, é interessante notar que enquanto a série temporal para os meteoritos observados oscila dentro de uma faixa pequena, o gráfico de linha para a quantidade de meteoritos encontrados apresenta alguns picos evidentes, que foram representados na tabela abaixo.
+$\hspace*{2em}$Por fim, é interessante notar que enquanto a série temporal para os meteoritos observados oscila dentro de uma faixa pequena, o gráfico de linhas para a quantidade de meteoritos achados apresenta alguns picos evidentes, que foram representados na tabela abaixo.
 
 ```{r, echo=FALSE, error=FALSE, message=FALSE, fig.align='center', fig.pos='H'}
 library(kableExtra)
@@ -207,7 +207,7 @@ kable(tabela_anos, format = "latex", caption = "Cinco anos com maior registro de
 
 ## Classificação dos meteoritos
 
-$\hspace*{2em}$Nesta seção, são identificadas as principais classificações dos meteoritos presentes no banco de dados. Os meteoritos costumam ser classificados de acordo com sua composição e estrutura, segundo uma miríade de propriedades e características. No entanto, não há padronização ou consenso científico quanto aos critérios ou à hierarquia dessas classificações, de modo que apenas nessa base de dados constam 466 tipos de meteoritos distintos, o que dificulta bastante uma análise mais sistemática da distribuição dessas categorias. Dessa forma, optou-se por considerar somente os dez tipos mais frequentes. 
+$\hspace*{2em}$Nesta seção, são identificadas as principais classificações dos meteoritos presentes no banco de dados. Os meteoritos costumam ser classificados de acordo com sua composição e estrutura, segundo uma miríade de propriedades e características. No entanto, não há padronização ou consenso científico quanto aos critérios ou à hierarquia dessas classificações, de modo que apenas nessa base de dados constam 466 tipos de meteoritos distintos, o que dificulta uma análise mais sistemática da distribuição dessas categorias. Dessa forma, foram  considerados somente os dez tipos mais frequentes para a realização das análises. 
 
 ```{r fig-sub-2, echo=FALSE, error=FALSE, message=FALSE, warning= FALSE, fig.cap='Gráfico de barras das 10 principais classificações de meteorito',out.width='.99\\linewidth',fig.height=4, fig.asp=NA, fig.ncol=1, fig.nrow=2}
 library(tidyverse)
@@ -373,19 +373,19 @@ m <- leaflet(banco_mapa) %>%
     \href{https://julia-nosralla.github.io/mapa/}{Link de uma versão interativa}
 \end{center}
 
-$\hspace*{2em}$Com base no mapa acima, é possível visualizar um comportamento interessante na distribuição dos locais de queda dos meteoritos documentados. Primeiramente, observa-se que há uma concentração de meteoritos encontrados na América do Norte, na Oceania, no norte da África e na península arábica, sobretudo na região onde fica o Omã. Já os meteoritos que foram observados em queda se encontram concentrados na Europa, na África Subsaariana e na região onde se encontra Índia, leste da China, Japão e países do sudeste asiático.
+$\hspace*{2em}$Com base no mapa acima, é possível visualizar um comportamento interessante na distribuição dos locais de queda dos meteoritos documentados. Primeiramente, observa-se que há uma concentração de meteoritos achados na América do Norte, na Oceania, no norte da África e na península arábica, sobretudo na região onde fica o Omã. Já os meteoritos que foram observados em queda se encontram concentrados na Europa, na África Subsaariana e na região onde se encontra Índia, leste da China, Japão e países do sudeste asiático.
 
 $\hspace*{2em}$Pode-se ainda notar que existem regiões onde poucos ou nenhum meteorito foi encontrado. A partir disso, é possível levantar algumas hipóteses sobre esse fenômeno. As regiões norte do Canadá e da Rússia e a Groenlândia, por exemplo, apresentam climas frios extremos e são, portanto, pouco habitadas, de modo que meteoritos que caem nessas regiões dificilmente são encontrados.
 
 $\hspace*{2em}$Outras regiões em que se observa uma ausência do registro de meteoritos são o centro da América do Sul e da África. Uma das similiradades entre as duas regiões é que ambas apresentam florestas tropicais densas, a Floresta Amazônica e a Floresta do Congo. Assim, as características da vegetação, do clima e do relevo dessas regiões poderia explicar a dificuldade em descobrir meteoritos caídos nesses locais.
 
-$\hspace*{2em}$Além disso, em contrapartida, o mapa induz a especular de forma análoga que exista uma maior facilidade para encontrar meteoritos em regiões áridas ou desérticas, tais como o Atacama, o Saara, a península arábica, grande parte do território australiano, o sudoeste dos EUA e o norte do México.
+$\hspace*{2em}$Além disso, em contrapartida, o mapa induz a especular de forma análoga que exista uma maior facilidade para encontrar meteoritos em regiões áridas ou desérticas, tais como o Atacama, o Saara, a península arábica, grande parte do território australiano, o sudoeste dos Estados Unidos e o norte do México.
 
  \newpage
  
 # Conclusão
 
-$\hspace*{2em}$Pode-se concluir, após a conclusão deste trabalho, que a análise exploratória, a construção de gráficos, tabelas e mapas com o auxílio de ferramentas estatísticas propiciam uma melhor compreensão e a extração de hipóteses investigativas e/ou informações adicionais de bases de dados, ainda que estas sejam bastante limitadas. Nesse caso, o uso do software R e de diversos pacotes possibilitou contornar a escassez de variáveis, inconsistências de registro, diferenças de escala e a existência de categorias pouco significativas na base de dados para expor características interessantes acerca do fenômeno da queda de meteoritos que não eram óbvias ou não estavam evidentes até então.
+$\hspace*{2em}$Pode-se concluir, após a finalização deste trabalho, que a análise exploratória e a construção de gráficos, tabelas e mapas com o auxílio de ferramentas estatísticas propiciam uma melhor compreensão das hipóteses investigativas extráidas e/ou informações adicionais de bases de dados, ainda que estas sejam bastante limitadas. Nesse caso, o uso do software R e de diversos pacotes possibilitou contornar a escassez de variáveis, inconsistências de registro, diferenças de escala e a existência de categorias pouco significativas na base de dados para expor características interessantes acerca do fenômeno da queda de meteoritos que não eram óbvias ou não estavam evidentes até então.
 
 \newpage
 
