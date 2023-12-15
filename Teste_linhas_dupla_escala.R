@@ -1,6 +1,10 @@
 library(tidyverse)
 
-# Your data manipulation remains the same
+banco <- read.csv("Meteorite_Landings.csv", na.strings = "")
+
+banco$year <- replace(banco$year, banco$year == 2101, 2010)
+
+banco$fall <- as.factor(banco$fall)
 
 banco_linhas1 <- banco %>% 
   filter(!is.na(year), !is.na(fall)) %>%
@@ -8,21 +12,19 @@ banco_linhas1 <- banco %>%
   group_by(year, fall) %>%
   summarise(total = n())
 
-# Create separate data frames for each category
-banco_observed <- banco_linhas1 %>%
-  filter(fall == "Observado")
-banco_found <- banco_linhas1 %>%
-  filter(fall == "Achado")
+banco_observados <- banco_linhas1 %>%
+  filter(fall == "Fell")
+banco_encontrados <- banco_linhas1 %>%
+  filter(fall == "Found")
 
-# Create the plot with dual Y-axes
 ggplot() +
-  geom_line(data = banco_found, aes(x = year, y = total, color = "Achado"), size = 1) +
-  geom_point(data = banco_found, aes(x = year, y = total), size = 2) +
-  geom_line(data = banco_observed, aes(x = year, y = total * 100, color = "Observado"), size = 1) + # Scaling the observed data for secondary axis
-  geom_point(data = banco_observed, aes(x = year, y = total * 100), size = 2) + # Scaling the observed data for secondary axis
-  scale_color_manual(name = "Legenda", labels = c("Observado", "Achado"), values = c("Observado" = "#fde725", "Achado" = "#440154")) +
-  labs(x = "Ano", y = "Número de meteoritos") +
+  geom_line(data = banco_encontrados, aes(x = year, y = total, color = "encontrados"), linewidth = 1) +
+  geom_point(data = banco_encontrados, aes(x = year, y = total, color = "encontrados"), size = 2) +
+  geom_line(data = banco_observados, aes(x = year, y = total * 100, color = "observados"), linewidth = 1) +
+  geom_point(data = banco_observados, aes(x = year, y = total * 100, color = "observados"), size = 2) +
+  scale_color_manual(name = "Legenda", labels = c("encontrados", "observados"), values = c("encontrados" = "#440154", "observados" = "#fde725")) +
+  labs(x = "Ano", y = "Número de meteoritos encontrados") +
   theme_minimal() +
   scale_y_continuous(
-    sec.axis = sec_axis(~./100, name = "Observado", breaks = seq(0, 30, by = 5))
+    sec.axis = sec_axis(~./100, name = "Número de meteoritos observados", breaks = seq(0, 30, by = 5))
   )
